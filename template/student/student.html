@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+	
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+    <title>聊天室:{{room_name}}</title>
+    
+    <style type="text/css">
+        body{   
+    		width: 100%;   
+    		height: 100%;   
+    		font-family: 'Open Sans',sans-serif;   
+    		margin: 0;   
+    		background-color:#4A374A;   
+		}
+		h1{   
+    		font-size: 2em;   
+			margin: 0.67em 0;  
+			color: #fff;   
+    		 
+		}      
+		@media screen and (min-width: 320px) and (max-width: 1156px){
+			.talk_con_mob{
+				width:600px;
+				height:500px;
+				border:1px solid #666;
+				margin:50px auto 0;
+				background:#f9f9f9;
+			}
+			.talk_show_mob{
+				width:580px;
+				height:420px;
+				border:1px solid #666;
+				background:#fff;
+				margin:10px auto 0;
+				overflow:auto;
+			}
+			.talk_input_mob{
+				width:580px;
+				margin:10px auto 0;
+			}
+			.talk_word_mob{
+				width:420px;
+				height:26px;
+				padding:0px;
+				float:left;
+				margin-left:10px;
+				outline:none;
+				text-indent:10px;
+			}  
+		}
+			.talk_con{
+				width:600px;
+				height:500px;
+				border:1px solid #666;
+				background:#f9f9f9;
+                display:inline-block
+			}
+			.talk_show{
+				width:580px;
+				height:420px;
+				border:1px solid #666;
+				background:#fff;
+				margin:10px auto 0;
+				overflow:auto;
+			}
+			.talk_input{
+				width:580px;
+				margin:10px auto 0;
+			}
+			.whotalk{
+				width:80px;
+				height:30px;
+				float:left;
+				outline:none;
+			}
+			.talk_word{
+				width:420px;
+				height:26px;
+				padding:0px;
+				float:left;
+				margin-left:10px;
+				outline:none;
+				text-indent:10px;
+			}         
+			.talk_sub{
+				width:56px;
+				height:30px;
+				float:right;
+				margin-right:10px;
+			}
+			.atalk{
+			   margin:10px; 
+			}
+			.atalk span{
+				display:inline-block;
+				background:#0181cc;
+				border-radius:10px;
+				color:#fff;
+				padding:5px 10px;
+			}
+			.btalk{
+				margin:10px;
+				text-align:right;
+			}
+			.btalk span{
+				display:inline-block;
+				background:#ef8201;
+				border-radius:10px;
+				color:#fff;
+				padding:5px 10px;
+			}
+			.dialog{
+        		width:602px;
+        		height:auto;
+        		position:absolute;
+        		background-color:#ccc;
+        		-webkit-box-shadow:1px 1px 3px #292929;
+        		-moz-box-shadow:1px 1px 3px #292929;
+       			box-shadow:1px 1px 3px #292929;
+        		margin:10px;
+        		visibility: hidden;
+    		}
+			.dialog-title{
+        		color:#fff;
+        		background-color:#404040;
+        		font-size:18pt;
+        		font-weight:bold;
+        		padding:4px 6px;
+        		cursor:move;
+			}
+			.but{   
+    			width: 60px;   
+    			min-height: 20px;   
+    			display: block;   
+    			background-color: #4a77d4;   
+    			border: 1px solid #3762bc;   
+    			color: #fff;   
+    			padding: 9px 14px;   
+    			font-size: 15px;   
+    			line-height: normal;   
+				border-radius: 5px;
+				float:left;   
+				margin-left: 10px;
+				
+			}
+
+			.mainContainer {
+    			display: block;
+    			width: 1024px;
+    			margin-left: auto;
+    			margin-right: auto;
+			}
+
+			.urlInput {
+    			display: block;
+    			width: 100%;
+    			margin-left: auto;
+    			margin-right: auto;
+    			margin-top: 8px;
+    			margin-bottom: 8px;
+			}
+
+			.centeredVideo {
+    			display: block;
+    			width: 100%;
+    			height: 650px;
+    			margin-left: auto;
+    			margin-right: auto;
+    			margin-bottom: auto;
+			}
+
+			.controls {
+    			display: block;
+    			width: 100%;
+    			text-align: left;
+    			margin-left: auto;
+    			margin-right: auto;
+			}  
+			
+
+    </style>
+
+    <script src="https://cdn.staticfile.org/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        
+        var ws = new WebSocket("ws://"+"localhost:8001"+"/chat");
+        ws.onmessage = function(e) {
+           
+            roomid=$("#roomid").val()
+            user=$("#user").val()
+            data = $.parseJSON(e.data)
+            if(data['roomid']==roomid){
+                if(data['from']==user){
+                    $("#content").append("<p align='right'>"+data['msg1']+"</p>"+"<p align='right' style='color:#00CC00'>"+data["msg2"]+"</p>")
+                }
+                else if(data['from']=='sys'){
+                    $("#content").append("<p align='center' style='color:#EE0000'>"+data['msg']+"</p>")
+                }
+                else if(data['from']=='users'){
+                    $('#names').empty();
+                    m=data['msg']
+                    for(i=0;i<m.length;i++){
+                        $('#names').append("<a href='javascript:;' onclick='call(this)' >"+m[i]+"<br></a>")
+                          
+                    }
+                }
+                else{
+                    $("#content").append("<p align='left'>"+data['msg1']+"</p>"+"<p align='left' style='color:#6699FF'>"+data["msg2"]+"</p>")
+                }
+            var div = document.getElementById('content');
+            div.scrollTop = div.scrollHeight;
+            
+        }}
+        function sendMsg() {
+            var msg = $("#msg").val();
+            ws.send(msg);
+            $("#msg").val("");  
+        }
+
+		function appear(){
+        	var popUp = document.getElementById("001");    
+        	popUp.style.visibility = "visible";
+    	}
+    	function hidePopup(){
+        	var popUp = document.getElementById("001"); 
+        	popUp.style.visibility = "hidden"; 
+    	} 
+		function create(){
+			if(document.getElementById("user").value!=document.getElementById("Creater").value){
+				alert("Sorry, you are not a teacher")
+			}
+			else{
+				ws.send("CPFL2FJOTQGzR/8DXZEyfAjxS9hSTk0Bs0f/A12RMnwI8UvYUk5NAbNH/wNdkTJ8");
+			}
+		}
+        
+    </script>
+</head>
+<body>
+    <center>
+    <h1>当前聊天室:{{room_name}}&nbsp&nbsp 当前聊天室id:{{room_id}}</h1>
+    <h1> 当前昵称:{{nick_name}}&nbsp&nbsp </h1><br>
+    <input type="hidden" value="{{nick_name}}" id="user">
+    <input type="hidden" value="{{room_id}}" id="roomid" name="roomid">
+	<input type="hidden" value="{{all_users}}" id="allusers">
+	<input type="hidden" value="{{creater}}" id="Creater">
+
+
+<!-- 视频区 -->
+<div class="mainContainer">
+	<video id="videoElement" class="centeredVideo" controls autoplay width="1024" height="576">Your browser is too old which doesn't support HTML5 video.</video>
+</div>
+<br>
+
+<script src="flv.js"></script>
+<script>
+	var player = document.getElementById('videoElement');
+	if (flvjs.isSupported()) {
+		var no=getQueryVariable('no');
+		var flvPlayer = flvjs.createPlayer({
+			type: 'flv',
+			isLive: true,
+			//url: 'http://localhost:8888/live?port=1935&app=live&stream=test'
+			url: 'http://127.0.0.1:8888/live?port=1935&app=live&stream=test'
+		},{
+			enableStashBuffer:false,
+			isLive:true,
+			autoCleanupSourceBuffer:true
+		});
+		flvPlayer.attachMediaElement(videoElement);
+		flvPlayer.load(); //加载
+	}
+
+	function flv_start() {
+		player.play();
+	}
+
+	function flv_pause() {
+		player.pause();
+	}
+
+	function flv_destroy() {
+
+
+		player.pause();
+		player.unload();
+		player.detachMediaElement();
+		player.destroy();
+		player = null;
+	}
+	function flv_seekto() {
+		player.currentTime = parseFloat(document.getElementsByName('seekpoint')[0].value);
+	}
+	function getQueryVariable(variable)
+	{
+		   var query = window.location.search.substring(1);
+		   var vars = query.split("&");
+		   for (var i=0;i<vars.length;i++) {
+				   var pair = vars[i].split("=");
+				   if(pair[0] == variable){return pair[1];}
+		   }
+		   return(false);
+	}
+	//progress
+	player.addEventListener('timeupdate',function(){
+		var x=flvPlayer.currentTime;
+		var y=flvPlayer._msectl.info.syncPoints[0].pts;
+		if(y-x*1000>2000){
+			player.currentTime=y/1000.0;	
+		}
+		//console.log(player.currentTime);
+	});
+	player.addEventListener('error',function(e){ console.error(e); });
+</script>
+
+
+
+<!-- 聊天区 -->
+<div class="dialog" id='001' style="right:600px;bottom:200px">
+	<div class="dialog-title">讨论区</div>
+
+    <div style='text-align:center;margin:0 auto;'>
+    <div class="talk_con">
+    <div class="talk_show" id="content">
+        {% for i in message %}
+            {% if i['from']==nick_name %}
+               <p align='right'>{{i['msg1']}}</p><p align='right' style='color:#00CC00'>{{i["msg2"]}}</p>
+            {% elif i['from']=='sys' %}
+               <p align='center'>{{i['msg']}}</p>
+            {% else %}
+               <p align='left'>{{i['msg1']}}</p><p align='left' style='color:#6699FF'>{{i["msg2"]}}</p>
+            {% end %}
+        {% end %}
+    </div>
+
+    <div class="talk_input">
+        <input type="text" class="talk_word" id="msg" >
+
+		<!-- <a href="javascript:;" onclick="sendMsg()">发送</a> -->
+		<button class="but" onclick="sendMsg()">发送</button>
+		<button class="but" onclick="hidePopup()">关闭</button>
+    </div>
+   </div>
+	
+	</div>
+</div>
+
+<button  class="but" style="height:75px;width:100px;position: absolute;right:255px;bottom:670px" onclick="appear()">讨论区</button>
+
+<button  class="but" style="height:75px;width:100px;position: absolute;right:255px;bottom:755px" onclick="create()">直播助手</button>
+
+<!-- 名单区 -->
+<div id="names" style="border-style:solid;height:497px;width:100px;position: absolute;right:250px;bottom:150px;
+	 background-color: #867a85;font-size: 25px;">
+	<font face="verdana">
+        {% for i in all_users %}
+            <a href="javascript:;" onclick="call(this)" >{{i}}<br></a>
+			{% end %}
+		</font>
+</div>
+
+<!-- 名单区功能 -->
+<script>
+    function call(e){
+        var line=$(e).text();
+        document.getElementById("msg").value+="@"+line+" ";
+	}
+</script>
+
+<!-- 聊天区可拖动 -->
+<script type="text/javascript">
+		var Dragging=function(validateHandler){ //参数为验证点击区域是否为可移动区域，如果是返回欲移动元素，负责返回null
+			var draggingObj=null; //dragging Dialog
+			var diffX=0;
+			var diffY=0;
+			
+			function mouseHandler(e){
+				switch(e.type){
+					case 'mousedown':
+						draggingObj=validateHandler(e);//验证是否为可点击移动区域
+						if(draggingObj!=null){
+							diffX=e.clientX-draggingObj.offsetLeft;
+							diffY=e.clientY-draggingObj.offsetTop;
+						}
+						break;
+					
+					case 'mousemove':
+						if(draggingObj){
+							draggingObj.style.left=(e.clientX-diffX)+'px';
+							draggingObj.style.top=(e.clientY-diffY)+'px';
+						}
+						break;
+					
+					case 'mouseup':
+						draggingObj =null;
+						diffX=0;
+						diffY=0;
+						break;
+				}
+			};
+			
+			return {
+				enable:function(){
+					document.addEventListener('mousedown',mouseHandler);
+					document.addEventListener('mousemove',mouseHandler);
+					document.addEventListener('mouseup',mouseHandler);
+				},
+				disable:function(){
+					document.removeEventListener('mousedown',mouseHandler);
+					document.removeEventListener('mousemove',mouseHandler);
+					document.removeEventListener('mouseup',mouseHandler);
+				}
+			}
+		}
+	
+		function getDraggingDialog(e){
+			var target=e.target;
+			while(target && target.className.indexOf('dialog-title')==-1){
+				target=target.offsetParent;
+			}
+			if(target!=null){
+				return target.offsetParent;
+			}else{
+				return null;
+			}
+		}
+		
+		Dragging(getDraggingDialog).enable();
+</script>
+
+<!-- jQuery -->
+
+</body>
+</html>

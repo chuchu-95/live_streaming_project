@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../../static/font/bootstrap-icons.css"/>
+    <link href="../../static/css/me.css" rel="stylesheet" type="text/css"/>
+    <script src="../../static/js/jquery-3.6.0.min.js"></script>
+    <script src="../../static/js/bootstrap.min.js"></script>
+
+    <script>
+      function judge() {    
+      if(document.getElementById("flag").value=="1"){
+          alert("Failed, the length of username is in 1~10, password and id can't be null")
+      }
+      if(document.getElementById("flag").value=="2"){
+          alert("This user already exists!")
+          
+      }
+      if(document.getElementById("flag").value=="3"){
+          alert("This id already exists!")
+      }
+      }
+    </script>
+
+</head>
+    
+<body class="body1" onload="judge()">
+  <input type="hidden" value="{{flag}}" id="flag">
+  <div class="place">
+      <div class="text-login">
+          <p style="font-size: 40px;">Register</p>
+      </div>
+      <form method="post" action="/register"> 
+        <div class="u-login form-floating"> 
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon">
+              <i id="basic-addon1" class="bi bi-person-circle"></i> 
+            </span>
+            <input type="text" class="form-control" name="username" placeholder="please input a username">
+          </div>
+        </div>
+        
+        <div class="p-login form-floating">
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon">
+              <i id="basic-addon1" class="bi bi-book"></i> 
+            </span>
+            <input type="text" class="form-control" name="id" placeholder="please input your teacher id or student number">
+          </div>
+        </div>
+        
+        <div class="p-login form-floating">
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon">
+              <i id="basic-addon1" class="bi bi-lock-fill"></i> 
+            </span>
+            <input type="password" class="form-control" name="password" placeholder="please input your password">
+          </div>
+        </div>
+        <div class="b-login d-grid gap-2">
+          <button class="btn-login btn btn-primary" type="submit">Register</button>
+        </div>
+      </form>
+  </div>
+
+</body>
+
+</html>

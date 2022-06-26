@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Board-IO-Student</title>
+  <meta name="description" content="Board-IO - Draw Live on multiple Devices with ease!">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">  
+  <link rel="stylesheet" href="https://startbootstrap.github.io/startbootstrap-stylish-portfolio/vendor/fontawesome-free/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <!-- <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="stylesheet" href="css/board.css"> -->
+  <link rel="stylesheet" href="../../static/css/portfolio.css">
+  <link rel="stylesheet" href="../../static/css/board.css">
+  <link rel="stylesheet" type="text/css" href="../../static/font/bootstrap-icons.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+<!-- Navigation -->
+
+  <div class="btn-group-fab" role="group" aria-label="FAB Menu">
+    <div>
+      <button type="button"  class="btn btn-main has-tooltip" data-placement="left" title="Menu"> <i class="fa fa-bars"></i> </button>
+      <button type="button" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Pen" id="menu_pen"> <i class="fa fa-pen"></i> </button>
+      <button type="button" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Eraser" id="menu_eraser"> <i class="fa fa-eraser"></i> </button>
+      <button type="button" class="btn btn-sub btn-info has-tooltip" data-placement="left" title="Pointer" id="menu_pointer"> <i class="fa fa-mouse-pointer"></i> </button>
+      <button type="button" class="btn btn-stat btn-white has-tooltip" data-placement="left" title="Redo" id="menu_redo" onclick="Redo()"> <i class="fa fa-redo"></i> </button>
+      <button type="button" class="btn btn-stat btn-white has-tooltip" data-placement="left" title="Undo" id="menu_undo" onclick="Undo()"> <i class="fa fa-undo"></i> </button>
+      
+      <div class="dropdown">
+        <button type="button" id="dropdownMenuButton" style="background: #155d74;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="btn btn-sub btn-color text-white has-tooltip" data-placement="left" title="Color Pallette"></button>
+        <div class="dropdown-menu" style="background-color: transparent;border: none;" aria-labelledby="dropdownMenuButton">
+          <button title="#1d809f" class="pallette-color"></button>
+          <button title="#16A085" class="pallette-color"></button>
+          <button title="#7D3C98" class="pallette-color"></button>
+          <button title="#E74C3C" class="pallette-color"></button>
+          <button title="#F39C12" class="pallette-color"></button>
+          <button title="#D35400" class="pallette-color"></button>
+          <button title="#BDC3C7" class="pallette-color"></button>
+          <button title="#2C3E50" class="pallette-color"></button>
+          <button title="#000000" class="pallette-color"></button>
+
+        </div>
+      </div>
+      
+
+      <div class="dropdown">
+        <button type="button" id="settingDropToggle" style="background: #0a3746;" class="btn btn-drop text-white has-tooltip" data-toggle="dropdown" data-placement="left" title="Save"> <i class="fa fa-cog"></i> </button>
+        <div class="dropdown-menu" style="background-color: transparent;border: none;" aria-labelledby="settingDropToggle">
+          <button type="button" class="set-button btn-danger"  id="btn-clear" title="Download" > <i class="fa fa-trash"></i> </button>
+          <button type="button" class="set-button btn-info"  onclick="toggleFullscreen()" title="Fullscreen"> <i class="fa fa-arrows-alt"></i> </button>
+          <button type="button" class="set-button btn-warning"  title="Live Draw" data-toggle="modal" data-target="#shareModal"> <i class="fa fa-link" ></i> </button>
+          <div class="btn-group w-100 text-center" role="group" aria-label="Basic example">
+            <button type="button" style="border-radius: 20px 0px 0px 20px;margin-right: 0px;" class="set-name btn-primary" id="btn-nickname-modal" title="Nickname" data-toggle="modal" data-target="#NicknameModal"> Peers </span></button>
+            <button type="button" style="border-radius: 0px 20px 20px 0px;margin-left: 0px;" class="set-button btn-primary" id="peers" title="Nickname" data-toggle="modal" data-target="#NicknameModal"> 0 </span></button>  
+          </div>
+          <button type="button" class="set-button btn-primary" id="btn-export" title="Export as Image"> <i class="fa fa-image"></i> </button>
+          <button type="button" class="set-button btn-primary" id="btn-download" title="Download Board"> <i class="fa fa-download"></i> </button>
+          <button type="button" class="set-button btn-primary" id="btn-open" title="Open Local Drawing"> <i class="fa fa-upload"></i> </button>
+          <input type="file" id="btn-input-file" style="display: none;">
+        </div> 
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="text-center" style="background-color: #f2f3f3; max-width: min-content;">
+    <div class="p-3" style="overflow: hidden; margin: auto; max-width: min-content;">
+        <div class="board-container">
+          <canvas id="canvas" class="canvas-io" width="1200" height="600"></canvas>
+        </div>
+        <!-- <img src="img/logo.svg" alt="Board-IO" style="position: fixed;bottom: 2%;right: 2%;width: 100px;" > -->
+        <i class="bi bi-pen-fill" style="position: fixed;bottom: 2%;right: 2%;width: 100px">Board</i>
+    </div>
+  </header>
+
+
+<!-- Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <button type="button" id="share-modal-back" class="float-left set-button" aria-label="Back">
+          <span aria-hidden="true"><i class="fa fa-chevron-left"></i></span>
+        </button>
+        <h5 class="modal-title text-center">Join Board</h5>
+        <button type="button" class="set-button float-right" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div id="share-result" style="display: none;" class="text-center">
+          <p>Successfully Joined!</p>
+        </div>
+        <div id="card-choose-share" display: block; class="text-center">
+          <p>Join teacher's Board?</p>
+          <div class="btn-group w-100" >
+            <button type="button"  id="btn-choose-join" style="border-radius:20px 20px 20px 20px;" class="btn p-2 btn-secondary">Join</button>
+            <input type="hidden" name="join-room-code" class="form-control text-center text-primary" placeholder="Type Room Code" value="1234">
+            <!-- <button type="button" id="btn-choose-create" style="border-radius:0px 20px 20px 0px ;" class="btn p-2 btn-secondary">Create Room</button> -->
+          </div>
+        </div>
+        <!-- <div id="card-choose-join" style="display: none;" class="text-center">
+          <p>Join a Room</p>
+          <div class="input-group mb-3">
+            <input type="text" name="join-room-code" class="form-control text-center text-primary" placeholder="Type Room Code">
+            <div class="input-group-append">
+              <button class="btn btn-outline-warning" id="btn-join-room" type="button" data-dismiss="modal">Join!</button>
+            </div>
+          </div>
+        </div> -->
+        <!-- <div id="card-choose-create" style="display: none;" class="text-center">
+          <p>Create a Room</p>
+          
+          <div class="input-group mb-3">
+            <input type="text" name="join-room-code" readonly class="form-control text-center text-primary" placeholder="Click Generate to Create a Room">
+            <div class="input-group-append">
+              <button class="btn btn-outline-success" id="btn-create-room" type="button">Generate</button>
+              <button class="btn btn-outline-success" style="display: none;" onclick="SendCode()" id="btn-share-room" type="button">Share to WhatsApp</button>
+            </div>
+          </div>
+        </div> -->
+        <div id="qrcode">
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="NicknameModal" tabindex="-1" role="dialog" aria-labelledby="shareModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h5 class="modal-title">Peer Stats</h5>
+        <button type="button" class="set-button float-right" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <div  class="text-center">
+          <div class="input-group mb-3">
+            <input type="text" name="nick-name" class="form-control text-center text-primary" placeholder="Type a Nickname!">
+            <div class="input-group-append">
+              <button class="btn btn-outline-warning" id="btn-set-name" value="One For All" type="button" data-dismiss="modal">Change Name!</button>
+            </div>
+          </div>
+          <p>Peers Connected:</p>
+          <div class="" id="peer-array">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  <!-- <script src="js/commons.js"></script>
+  <script src="bundle.js"></script>
+  <script src="js/save.js"></script> -->
+  <script src="../../static/js/commons.js"></script>
+  <script src="../../static/js/bundle.js"></script>
+</body>
+</html>
