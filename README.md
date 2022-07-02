@@ -1,5 +1,5 @@
 # live_streaming_project
 chuchu's class project
 
-using technology:
+used technology:
     nginx, ffmpeg, webSocket, webRtc
